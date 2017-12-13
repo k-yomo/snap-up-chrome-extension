@@ -113,6 +113,22 @@ export default class RegisterEnglishForm extends Component {
     this.setState({ meaning });
   }
 
+
+  clearState() {
+    this.setState({
+      english: '',
+      meaning: '',
+      gifUrl: '',
+      wordInfo: {
+        parts: []
+      },
+      suggestedMeanings: [],
+      isEnglishEntered: false,
+      noSuggestedMeaning: false,
+      noDefinition: false
+    });
+  }
+
   render() {
     const {
       english,
@@ -169,6 +185,26 @@ export default class RegisterEnglishForm extends Component {
                   {part}
                 </Button>
               )}
+            </div>
+            <div>
+              <Button
+                onClick={() => this.clearState()}
+                style={{ marginLeft: 5 }}
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={!(english && meaning)}
+                onClick={() => this.onSubmitCard()}
+                style={{
+                  marginLeft: 10,
+                  background: english && meaning ? 'linear-gradient(45deg, #EF5350 30%, #FF8E53 90%)' : '#BDBDBD',
+                  color: 'white',
+                  width: 125
+                }}
+              >
+                Save
+              </Button>
             </div>
           </div>
         }
