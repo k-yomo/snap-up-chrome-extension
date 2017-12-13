@@ -1,18 +1,46 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import GifGenerator from './components/GifGenerator';
+import Form from './components/Form';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      english: '',
+      meaning: '',
+      gifUrl: '',
+      wordInfo: {
+        parts: []
+      },
+      suggestedMeanings: [],
+      partConverter: {
+        noun: 'N',
+        verb: 'V',
+        adjective: 'Adj',
+        adverb: 'Adv',
+        unapprecable: 'N/A'
+      },
+      parts: ['N', 'V', 'Adj', 'Adv', 'N/A'],
+      partsColorsPair: {
+          N: '#EF5350',
+          V: '#F37C4A',
+          Adj: '#F7A644',
+          Adv: '#FCD63D',
+          'N/A': '#888'
+        },
+      noSuggestedMeaning: false,
+      noDefinition: false,
+      isEnglishEntered: false,
+      loadingGif: false
+    };
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <GifGenerator />
+        <Form />
       </div>
     );
   }
