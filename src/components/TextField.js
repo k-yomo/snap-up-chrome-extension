@@ -14,16 +14,16 @@ const styles = theme => ({
   },
   inputInkbar: {
     '&:before': {
-      backgroundColor: red[400],
+      backgroundColor: red[400]
     },
     '&:after': {
-      backgroundColor: red[400],
+      backgroundColor: red[400]
     },
   },
   textFieldRoot: {
     padding: 0,
     'label + &': {
-      marginTop: theme.spacing.unit * 3,
+      marginTop: theme.spacing.unit * 3
     },
   }
 });
@@ -36,7 +36,7 @@ const TextField = (props) => (
           }}
           htmlFor="custom-color-input"
         >
-          New English Word
+          {props.label}
         </InputLabel>
         <Input
           id="custom-color-input"

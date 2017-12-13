@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import Button from 'material-ui/Button';
 import GifGenerator from './GifGenerator';
 import TextField from './TextField';
 import SearchButton from './SearchButton';
@@ -36,35 +37,19 @@ export default class RegisterEnglishForm extends Component {
       isEnglishEntered: false,
       loadingGif: false
     };
+    this.onPartOfSpeechClick = this.onPartOfSpeechClick.bind(this);
   }
 
   onSubmitEnglish() {
-  this.setState({ isEnglishEntered: true });
+    if (this.state.english) {
+      this.setState({ isEnglishEntered: true });
 
-  let english = this.state.english.toLowerCase();
-  english = english.endsWith(' ') ? english.slice(0, -1) : english;
+      let english = this.state.english.toLowerCase();
+      english = english.endsWith(' ') ? english.slice(0, -1) : english;
 
-  this.fetchMeanings(english);
-  this.fetchWordInfo(english);
-  this.fetchGif(english);
-}
-
-fetchMeanings(english) {
-    const suggestedMeanings = [];
-    axios.get(`https://glosbe.com/gapi/translate?from=en&dest=ja&format=json&phrase=${english}`)
-    .then((response) => {
-      const tuc = response.data.tuc;
-      if (tuc.length) {
-        for (let i = 0; i < 4; i++) {
-          if (!(tuc[i] && tuc[i].phrase)) { break; }
-          this.setState({ noSuggestedMeaning: false });
-          suggestedMeanings.push(tuc[i].phrase.text);
-        }
-      } else {
-        this.setState({ noSuggestedMeaning: true });
-      }
-      this.setState({ suggestedMeanings });
-    });
+      this.fetchWordInfo(english);
+      this.fetchGif(english);
+    }
   }
 
   fetchWordInfo(english) {
@@ -85,7 +70,7 @@ fetchMeanings(english) {
 
       slicedResults.forEach(result => result.examples && examples.push(result.examples));
       wordInfo.examples = [].concat.apply([], examples);
-
+      console.log(wordInfo);
       this.setState({ wordInfo });
     });
   }
@@ -94,13 +79,30 @@ fetchMeanings(english) {
     this.setState({ loadingGif: true });
     axios.get(`https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_KEY}&s=${english}`)
     .then(response => {
-      if (response.data.data.images.fixed_height_downsampled.url) {
+      if (response.data.data.images) {
         this.setState({
           gifUrl: response.data.data.images.fixed_height_downsampled.url,
           loadingGif: false
          });
       }
     });
+  }
+
+  onPartOfSpeechClick(pressedPart) {
+    let wordInfo = Object.assign(this.state.wordInfo);
+    if (wordInfo.parts.includes(pressedPart)) {
+      wordInfo = {
+        ...wordInfo,
+        parts: wordInfo.parts.filter(part => part !== pressedPart)
+      };
+    } else {
+      wordInfo.parts.push(pressedPart);
+    }
+    this.setState({ wordInfo });
+  }
+
+  noDefFound() {
+    this.setState({ noDefinition: true });
   }
 
   onEnglishChange(english) {
@@ -117,12 +119,11 @@ fetchMeanings(english) {
       meaning,
       suggestedMeanings,
       wordInfo,
-      isEnglishEntered,
-      partsColors
+      isEnglishEntered
     } = this.state;
 
     return (
-      <div>
+      <div className='container'>
         { isEnglishEntered &&
           <GifGenerator
             english={english}
@@ -132,12 +133,45 @@ fetchMeanings(english) {
           />
         }
         <TextField
+          label='New English Word'
           text={this.state.english}
           onChange={this.onEnglishChange.bind(this)}
          />
         <SearchButton
           onClick={this.onSubmitEnglish.bind(this)}
         />
+        { isEnglishEntered &&
+          <div>
+            {this.state.noSuggestedMeaning &&
+              <p>There is no suggested meaning</p>
+            }
+            <TextField
+              label='The Meaning'
+              text={this.state.meaning}
+              onChange={this.onMeaningChange.bind(this)}
+            />
+            <div style={{ margin: 'auto', textAlign: 'center' }}>
+            {this.state.parts.map((part, i) =>
+                <Button
+                  key={i}
+                  onClick={() => this.onPartOfSpeechClick(part)}
+                  style={{
+                    maxWidth: 36,
+                    minWidth: 36,
+                    maxHeight: 36,
+                    minHeight: 36,
+                    margin: 5,
+                    padding: 10,
+                    color: 'white',
+                    backgroundColor: wordInfo.parts && wordInfo.parts.includes(part) ? this.state.partsColorsPair[part] : '#BDBDBD'
+                  }}
+                >
+                  {part}
+                </Button>
+              )}
+            </div>
+          </div>
+        }
       </div>
     );
   }
