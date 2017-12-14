@@ -44,9 +44,9 @@ const SelectDeck = (props) => {
         onChange={props.onChange}
         input={<Input name="deckId" id="deckId" classes={{ inkbar: props.classes.inputInkbar }} />}
       >
-        {props.decks.map(deck =>
+        {props.decks.length > 0 ? props.decks.map(deck =>
           <MenuItem key={deck.id} value={deck.id}>{deck.title}</MenuItem>
-          )}
+        ) : <MenuItem value={0}>Chrome Extension</MenuItem>}
       </Select>
     </FormControl>
   );

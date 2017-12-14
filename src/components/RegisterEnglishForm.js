@@ -32,7 +32,7 @@ export default class RegisterEnglishForm extends Component {
       noSuggestedMeaning: false,
       isEnglishEntered: false,
       loadingGif: false,
-      deckId: ''
+      deckId: 0
     };
     this.onPartOfSpeechClick = this.onPartOfSpeechClick.bind(this);
   }
@@ -69,9 +69,18 @@ export default class RegisterEnglishForm extends Component {
       gifUrl: this.state.gifUrl,
       ...wordInfo
     };
+    
+    let deckId;
+    if (this.state.deckId === 0) {
+      deckId = uuidv1();
+      const ref = firebase.firestore().doc(`users/${this.props.uid}/decks/${deckId}`);
+      ref.set({ title: 'Chrome Extension' });
+    } else {
+      deckId = this.state.deckId;
+    }
 
     this.clearState();
-    this.createCard(this.props.uid, this.state.deckId, newCard);
+    this.createCard(this.props.uid, deckId, newCard);
   }
 
   createCard(uid, deckId, card) {
