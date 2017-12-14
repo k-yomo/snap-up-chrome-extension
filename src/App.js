@@ -1,5 +1,3 @@
-/*global chrome*/
-
 import React, { Component } from 'react';
 import firebase from 'firebase';
 import './App.css';
@@ -57,12 +55,23 @@ class App extends Component {
     });
   }
 
+  logout() {
+    firebase.auth().signOut();
+    this.setState({ uid: null });
+  }
+
   render() {
     return (
         <div className="App">
           {this.state.uid ?
-          <RegisterEnglishForm decks={this.state.decks} uid={this.state.uid}/> :
-          <LoginForm loginToFirebase={this.loginToFirebase.bind(this)} error={this.state.error} />
+            <RegisterEnglishForm
+              decks={this.state.decks}
+              uid={this.state.uid}
+              logout={this.logout.bind(this)}
+            /> :
+            <LoginForm
+              loginToFirebase={this.loginToFirebase.bind(this)} error={this.state.error}
+            />
           }
         </div>
     );

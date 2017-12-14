@@ -15,6 +15,18 @@
   text-align: center;
 }
 
+.logout {
+  text-align: right;
+  margin-right: -22px;
+}
+
+.logout > a {
+  color: #673AB7;
+}
+.logout > a:hover {
+  color: #311B92;
+}
+
 
 .search-icon {
   padding: 10px;
@@ -27,6 +39,7 @@
 .gif {
   height: 130px;
   width: 230px;
+  margin-top: 10px;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
 }

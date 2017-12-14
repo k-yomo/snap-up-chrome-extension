@@ -69,7 +69,7 @@ export default class RegisterEnglishForm extends Component {
       gifUrl: this.state.gifUrl,
       ...wordInfo
     };
-    
+
     let deckId;
     if (this.state.deckId === 0) {
       deckId = uuidv1();
@@ -186,12 +186,12 @@ export default class RegisterEnglishForm extends Component {
     const {
       english,
       meaning,
-      suggestedMeanings,
       wordInfo,
       isEnglishEntered
     } = this.state;
     return (
       <div className='container'>
+        <div className='logout'><a href='#' onClick={() => this.props.logout()}>Logout</a></div>
         { isEnglishEntered &&
           <GifGenerator
             english={english}
