@@ -8,5 +8,8 @@
     "default_title": "Snap Up Ext"
   },
   "content_security_policy":"script-src 'self' https://www.gstatic.com/   https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+  "icons" : {
+   "128": "snap_up_128.png"
+  },
   "version": "1.0"
 }
