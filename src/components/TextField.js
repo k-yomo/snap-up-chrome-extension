@@ -34,12 +34,10 @@ const TextField = (props) => (
           FormControlClasses={{
             focused: props.classes.inputLabelFocused,
           }}
-          htmlFor="custom-color-input"
         >
           {props.label}
         </InputLabel>
         <Input
-          id="custom-color-input"
           classes={{ inkbar: props.classes.inputInkbar }}
           value={props.text}
           onChange={(e) => props.onChange(e.target.value)}

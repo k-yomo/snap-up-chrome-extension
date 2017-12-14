@@ -7,8 +7,6 @@
     "default_popup": "index.html",
     "default_title": "Snap Up Ext"
   },
-  "permissions": [
-     "storage"
-   ],
+  "content_security_policy":"script-src 'self' https://www.gstatic.com/   https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
   "version": "1.0"
 }

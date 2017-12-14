@@ -8,6 +8,14 @@
   width: 230px;
 }
 
+
+.login-container {
+  margin: 0 auto;
+  width: 230px;
+  text-align: center;
+}
+
+
 .search-icon {
   padding: 10px;
   background: linear-gradient(45deg, #EF5350 30%, #FF8E53 90%);

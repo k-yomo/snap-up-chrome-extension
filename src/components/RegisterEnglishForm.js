@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import firebase from 'firebase';
+import uuidv1 from 'uuid/v1';
 import axios from 'axios';
 import Button from 'material-ui/Button';
 import GifGenerator from './GifGenerator';
 import TextField from './TextField';
 import SearchButton from './SearchButton';
+import PartsOfSpeech from './PartsOfSpeech';
+import SelectDeck from './SelectDeck';
 import { X_MASHAPE_KEY, GIPHY_KEY } from '../env';
 
 
@@ -25,17 +29,10 @@ export default class RegisterEnglishForm extends Component {
         adverb: 'Adv',
         unapprecable: 'N/A'
       },
-      parts: ['N', 'V', 'Adj', 'Adv', 'N/A'],
-      partsColorsPair: {
-          N: '#EF5350',
-          V: '#F37C4A',
-          Adj: '#F7A644',
-          Adv: '#FCD63D',
-          'N/A': '#888'
-        },
       noSuggestedMeaning: false,
       isEnglishEntered: false,
-      loadingGif: false
+      loadingGif: false,
+      deckId: ''
     };
     this.onPartOfSpeechClick = this.onPartOfSpeechClick.bind(this);
   }
@@ -49,8 +46,39 @@ export default class RegisterEnglishForm extends Component {
 
       this.fetchWordInfo(english);
       this.fetchGif(english);
+
+      if (this.props.decks.length > 0) {
+        this.setState({ deckId: this.props.decks[0].id });
+      }
     }
   }
+
+  onSubmitCard() {
+    const wordInfo = this.state.wordInfo;
+    wordInfo.examples = wordInfo.examples ? this.convertArrayToObj(wordInfo.examples) : null;
+
+    if (wordInfo.parts.length > 0) {
+      wordInfo.parts = this.convertArrayBoolObj(wordInfo.parts);
+    } else {
+      wordInfo.parts = { 'N/A': true };
+    }
+
+    const newCard = {
+      english: this.state.english,
+      meaning: this.state.meaning,
+      gifUrl: this.state.gifUrl,
+      ...wordInfo
+    };
+
+    this.clearState();
+    this.createCard(this.props.uid, this.state.deckId, newCard);
+  }
+
+  createCard(uid, deckId, card) {
+    const cardId = uuidv1();
+    const ref = firebase.firestore().doc(`users/${uid}/decks/${deckId}/cards/${cardId}`);
+    ref.set(card);
+  };
 
   fetchWordInfo(english) {
     axios.get(`https://wordsapiv1.p.mashape.com/words/${english}`,
@@ -70,7 +98,6 @@ export default class RegisterEnglishForm extends Component {
 
       slicedResults.forEach(result => result.examples && examples.push(result.examples));
       wordInfo.examples = [].concat.apply([], examples);
-      console.log(wordInfo);
       this.setState({ wordInfo });
     });
   }
@@ -113,6 +140,23 @@ export default class RegisterEnglishForm extends Component {
     this.setState({ meaning });
   }
 
+  onSelectedDeckChange(e) {
+    this.setState({ deckId: e.target.value });
+  }
+
+  convertArrayToObj(arr) {
+    return arr.reduce((obj, el, index) => {
+      obj[index] = el;
+      return obj;
+    }, {});
+  }
+
+  convertArrayBoolObj(arr) {
+    return arr.reduce((obj, el) => {
+      obj[el] = true;
+      return obj;
+    }, {});
+  }
 
   clearState() {
     this.setState({
@@ -137,7 +181,6 @@ export default class RegisterEnglishForm extends Component {
       wordInfo,
       isEnglishEntered
     } = this.state;
-
     return (
       <div className='container'>
         { isEnglishEntered &&
@@ -166,41 +209,34 @@ export default class RegisterEnglishForm extends Component {
               text={this.state.meaning}
               onChange={this.onMeaningChange.bind(this)}
             />
-            <div style={{ margin: 'auto', textAlign: 'center' }}>
-            {this.state.parts.map((part, i) =>
-                <Button
-                  key={i}
-                  onClick={() => this.onPartOfSpeechClick(part)}
-                  style={{
-                    maxWidth: 36,
-                    minWidth: 36,
-                    maxHeight: 36,
-                    minHeight: 36,
-                    margin: 5,
-                    padding: 10,
-                    color: 'white',
-                    backgroundColor: wordInfo.parts && wordInfo.parts.includes(part) ? this.state.partsColorsPair[part] : '#BDBDBD'
-                  }}
-                >
-                  {part}
-                </Button>
-              )}
-            </div>
+            <PartsOfSpeech
+              onClick={this.onPartOfSpeechClick.bind(this)}
+              wordInfo={wordInfo}
+            />
+            <SelectDeck
+              deckId={this.state.deckId}
+              decks={this.props.decks}
+              onChange={this.onSelectedDeckChange.bind(this)} />
             <div>
               <Button
                 onClick={() => this.clearState()}
-                style={{ marginLeft: 5 }}
+                style={{
+                  marginTop: 5,
+                  marginLeft: 5
+                }}
               >
                 Cancel
               </Button>
               <Button
                 disabled={!(english && meaning)}
                 onClick={() => this.onSubmitCard()}
+                className='submit-button'
                 style={{
+                  width: 125,
+                  marginTop: 5,
                   marginLeft: 10,
-                  background: english && meaning ? 'linear-gradient(45deg, #EF5350 30%, #FF8E53 90%)' : '#BDBDBD',
                   color: 'white',
-                  width: 125
+                  background: english && meaning ? 'linear-gradient(45deg, #EF5350 30%, #FF8E53 90%)' : '#BDBDBD',
                 }}
               >
                 Save
