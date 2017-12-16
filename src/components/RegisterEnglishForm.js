@@ -207,7 +207,7 @@ export default class RegisterEnglishForm extends Component {
       wordInfo,
       isEnglishEntered
     } = this.state;
-    console.log(wordInfo);
+    
     return (
       <div className='container'>
         <div className='logout'><a href='#' onClick={() => this.props.logout()}>Logout</a></div>
