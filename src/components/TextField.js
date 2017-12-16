@@ -40,9 +40,11 @@ const TextField = (props) => (
           {props.label}
         </InputLabel>
         <Input
+          autoFocus={props.autoFocus ? true : false}
           classes={{ inkbar: props.classes.inputInkbar }}
           value={props.text}
           onChange={(e) => props.onChange(e.target.value)}
+          onEnter={() => console.log('Entered!')}
         />
       </FormControl>
     );

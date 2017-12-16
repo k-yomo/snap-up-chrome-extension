@@ -31,6 +31,7 @@ export default class LoginForm extends Component {
         <TextField
           label='Email adress'
           text={email}
+          autoFocus={true}
           onChange={this.onEmailChange.bind(this)}
         />
 

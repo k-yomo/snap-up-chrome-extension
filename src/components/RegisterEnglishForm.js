@@ -38,6 +38,11 @@ export default class RegisterEnglishForm extends Component {
     this.onPartOfSpeechClick = this.onPartOfSpeechClick.bind(this);
   }
 
+  onEnterPressed(e) {
+    e.preventDefault();
+    this.onSubmitEnglish();
+  }
+
   onSubmitEnglish() {
     if (this.state.english) {
       this.setState({ isEnglishEntered: true });
@@ -207,7 +212,7 @@ export default class RegisterEnglishForm extends Component {
       wordInfo,
       isEnglishEntered
     } = this.state;
-    
+
     return (
       <div className='container'>
         <div className='logout'><a href='#' onClick={() => this.props.logout()}>Logout</a></div>
@@ -219,11 +224,14 @@ export default class RegisterEnglishForm extends Component {
             fetchGif={this.fetchGif.bind(this)}
           />
         }
+        <form style={{ display: 'inline-block' }} onSubmit={(e) => this.onEnterPressed(e)}>
         <TextField
           label='New English Word'
           text={this.state.english}
+          autoFocus={true}
           onChange={this.onEnglishChange.bind(this)}
          />
+       </form>
         <SearchButton
           onClick={this.onSubmitEnglish.bind(this)}
         />
@@ -256,6 +264,7 @@ export default class RegisterEnglishForm extends Component {
             <TextField
               label='The Meaning'
               text={this.state.meaning}
+              autoFocus={true}
               onChange={this.onMeaningChange.bind(this)}
             />
             <PartsOfSpeech
