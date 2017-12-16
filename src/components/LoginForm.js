@@ -43,9 +43,10 @@ export default class LoginForm extends Component {
           disabled={!(email && password)}
           onClick={() => this.onSubmitForm()}
           style={{
+            width: 145,
+            marginTop: 10,
             background: email && password ? 'linear-gradient(45deg, #EF5350 30%, #FF8E53 90%)' : '#BDBDBD',
-            color: 'white',
-            width: 145
+            color: 'white'
           }}
         >
           Login

@@ -7,7 +7,9 @@ import { FormControl } from 'material-ui/Form';
 
 const styles = theme => ({
   formControl: {
-    margin: theme.spacing.unit,
+    marginTop: 5,
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
   },
   inputLabelFocused: {
     color: red[400],

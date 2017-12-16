@@ -21,7 +21,9 @@ export default (props) => (
           minWidth: 36,
           maxHeight: 36,
           minHeight: 36,
-          margin: 5,
+          marginTop: 10,
+          marginRight: 5,
+          marginLeft: 5,
           padding: 10,
           color: 'white',
           backgroundColor: props.wordInfo.parts && props.wordInfo.parts.includes(part) ? partsColorsPair[part] : '#BDBDBD'

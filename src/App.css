@@ -43,3 +43,10 @@
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
 }
+
+.no-suggested-meaning {
+  margin-top: 5px;
+  margin-left: 7px;
+  font-size: 14px;
+  color: #F44336;
+}

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import firebase from 'firebase';
 import uuidv1 from 'uuid/v1';
 import axios from 'axios';
+import fetchJsonp from 'fetch-jsonp';
 import Button from 'material-ui/Button';
 import GifGenerator from './GifGenerator';
 import TextField from './TextField';
@@ -45,7 +46,7 @@ export default class RegisterEnglishForm extends Component {
       english = english.endsWith(' ') ? english.slice(0, -1) : english;
 
       this.fetchGif(english);
-      // this.fetchMeanings(english);
+      this.fetchMeanings(english);
       this.fetchWordInfo(english);
 
       if (this.props.decks.length > 0) {
@@ -110,9 +111,11 @@ export default class RegisterEnglishForm extends Component {
 
   fetchMeanings(english) {
   const suggestedMeanings = [];
-  axios.get(`https://glosbe.com/gapi/translate?from=en&dest=ja&format=json&phrase=${english}`)
-  .then((response) => {
-    const tuc = response.data.tuc;
+  fetchJsonp(`https://glosbe.com/gapi/translate?from=en&dest=ja&format=json&phrase=${english}`)
+  .then(response => {
+    return response.json();
+  }).then(json => {
+    const tuc = json.tuc;
     if (tuc.length) {
       for (let i = 0; i < 4; i++) {
         if (!(tuc[i] && tuc[i].phrase)) { break; }
@@ -227,10 +230,10 @@ export default class RegisterEnglishForm extends Component {
         { isEnglishEntered &&
           <div>
             {this.state.noSuggestedMeaning &&
-              <p>There is no suggested meaning</p>
+              <div className='no-suggested-meaning'>There is no suggested meaning</div>
             }
             {this.state.suggestedMeanings.length > 0 &&
-              <div style={{ margin: 'auto', textAlign: 'center' }}>
+              <div style={{ marginTop: 5 }}>
                 {this.state.suggestedMeanings.map((suggestedM, i) =>
                   <Button
                     key={i}
