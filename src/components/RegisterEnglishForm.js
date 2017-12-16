@@ -44,8 +44,9 @@ export default class RegisterEnglishForm extends Component {
       let english = this.state.english.toLowerCase();
       english = english.endsWith(' ') ? english.slice(0, -1) : english;
 
-      this.fetchWordInfo(english);
       this.fetchGif(english);
+      // this.fetchMeanings(english);
+      this.fetchWordInfo(english);
 
       if (this.props.decks.length > 0) {
         this.setState({ deckId: this.props.decks[0].id });
@@ -91,11 +92,7 @@ export default class RegisterEnglishForm extends Component {
 
   fetchWordInfo(english) {
     axios.get(`https://wordsapiv1.p.mashape.com/words/${english}`,
-    { headers: {
-      'X-Mashape-Key': X_MASHAPE_KEY,
-      'Access-Control-Allow-Origin' : '*'
-      }
-    })
+    { headers: { 'X-Mashape-Key': X_MASHAPE_KEY } })
     .then(response => {
       const wordInfo = { parts: [] };
       const examples = [];
@@ -110,6 +107,24 @@ export default class RegisterEnglishForm extends Component {
       this.setState({ wordInfo });
     });
   }
+
+  fetchMeanings(english) {
+  const suggestedMeanings = [];
+  axios.get(`https://glosbe.com/gapi/translate?from=en&dest=ja&format=json&phrase=${english}`)
+  .then((response) => {
+    const tuc = response.data.tuc;
+    if (tuc.length) {
+      for (let i = 0; i < 4; i++) {
+        if (!(tuc[i] && tuc[i].phrase)) { break; }
+        this.setState({ noSuggestedMeaning: false });
+        suggestedMeanings.push(tuc[i].phrase.text);
+      }
+    } else {
+      this.setState({ noSuggestedMeaning: true });
+    }
+    this.setState({ suggestedMeanings });
+  });
+}
 
   fetchGif(english) {
     this.setState({ loadingGif: true });
@@ -189,6 +204,7 @@ export default class RegisterEnglishForm extends Component {
       wordInfo,
       isEnglishEntered
     } = this.state;
+    console.log(wordInfo);
     return (
       <div className='container'>
         <div className='logout'><a href='#' onClick={() => this.props.logout()}>Logout</a></div>
@@ -212,6 +228,27 @@ export default class RegisterEnglishForm extends Component {
           <div>
             {this.state.noSuggestedMeaning &&
               <p>There is no suggested meaning</p>
+            }
+            {this.state.suggestedMeanings.length > 0 &&
+              <div style={{ margin: 'auto', textAlign: 'center' }}>
+                {this.state.suggestedMeanings.map((suggestedM, i) =>
+                  <Button
+                    key={i}
+                    onClick={() => this.onMeaningChange(suggestedM)}
+                    style={{
+                      minWidth: 36,
+                      maxHeight: 36,
+                      minHeight: 36,
+                      margin: 5,
+                      padding: 10,
+                      color: 'white',
+                      backgroundColor: suggestedM === meaning ? '#EF5350' : '#BDBDBD',
+                    }}
+                  >
+                    {suggestedM}
+                  </Button>
+                )}
+              </div>
             }
             <TextField
               label='The Meaning'
