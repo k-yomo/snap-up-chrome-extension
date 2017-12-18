@@ -12,6 +12,7 @@ $ yarn start
 ```
 
 to add extension to chrome:
+
 [Chrome Web Store](https://chrome.google.com/webstore/detail/snap-up/bobdjifdmanmainkcmnkjbfehokhfhok?hl=en)
 
 ## Prerequisites
